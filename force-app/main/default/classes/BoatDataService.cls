@@ -3,8 +3,10 @@ public with sharing class BoatDataService {
     @AuraEnabled(cacheable = true)
     public static List<BoatType__c> getBoatTypes() {
         return [
-            SELECT Name
+            SELECT Id, Name
             FROM BoatType__c
+            WITH SECURITY_ENFORCED
+            ORDER BY Name
         ];
     }
 

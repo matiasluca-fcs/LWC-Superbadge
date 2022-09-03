@@ -14,9 +14,9 @@ export default class BoatSearch extends LightningElement {
     // This custom event comes from the form
     searchBoats(event) {
 
-        console.log('******* EVENT DETAILS THAT CAME TO boatSearch.searchBoats(event): ', event);
+        console.log('******* EVENT DETAILS THAT CAME TO boatSearch.searchBoats(event): ', event.detail.boatTypeId);
 
-        this.boatiddesdecombobox = event.details.boatTypeId;
+        //this.boatiddesdecombobox = event.details.boatTypeId;
 
          // Evento para enviar a Boat Search Results
         // const myDetails = {

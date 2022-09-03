@@ -7,7 +7,7 @@ export default class BoatSearchForm extends LightningElement {
     @api selectedBoatTypeId = '';
     
     // Private
-    _error = undefined;
+    error = undefined;
     
     searchOptions;
     
@@ -16,23 +16,41 @@ export default class BoatSearchForm extends LightningElement {
     boatTypes({ error, data }) {
         if (data) {
             //this.searchOptions = data.map( function(item) {
-            this.searchOptions = data.map( (item) => {
-                return [
-                    { label: item.fields.Name, value: item.fields.Id}
-                ];
+            this.searchOptions = data.map( type => {
+                console.log('**** BoatType record retrieved from Apex Controller:', type)
+                return { label: type.Name, value: type.Id}
             });
-            this.searchOptions.unshift({ label: 'All Types', value: '' });
+            this.searchOptions.unshift({ label: 'All Types', value: '' }); // This method pushes a new value (in this case, an Object) into the first position in an array
         } else if (error) {
             this.searchOptions = undefined;
-            this._error = error;
+            this.error = error;
         }
+
+        console.log('****Search Options after the data.map(): ', this.searchOptions);
     }
     
     // Fires event that the search option has changed.
     // passes boatTypeId (value of this.selectedBoatTypeId) in the detail
+    // Create the const searchEvent
+    // searchEvent must be the new custom event search
+    
+    //console.log('***Selected Boat Type from handleSearchOptionChange: ', event.detail);
     handleSearchOptionChange(event) {
-        // Create the const searchEvent
-        // searchEvent must be the new custom event search
+
+        this.selectedBoatTypeId = event.detail.value;
+
+        const myDetails = {
+            boatTypeId: this.selectedBoatTypeId
+        };
+
+        const searchEvent = new CustomEvent(
+            "search",
+            { detail: myDetails }
+        );
+
+        this.dispatchEvent(searchEvent);
+    }
+}
 
         // const searchEvent = new CustomEvent('selectedBoatTypeId', {
         //     detail: event.detail
@@ -46,14 +64,6 @@ export default class BoatSearchForm extends LightningElement {
         //     detail: event.target.value
         // });
 
-        const myDetails = {
-            boatTypeId: this.selectedBoatTypeId
-        }
-
-        const searchEvent = new CustomEvent('search', {
-            detail: myDetails
-        });
-
         // const searchEvent = new CustomEvent('selectedBoatTypeId', {
         //     detail: this.selectedBoatTypeId.fields.Id.value
         // });
@@ -61,7 +71,3 @@ export default class BoatSearchForm extends LightningElement {
         // const searchEvent = new CustomEvent('selectedboattypeid', {
         //     detail: this.selectedBoatTypeId
         // });
-
-        this.dispatchEvent(searchEvent);
-    }
-}
