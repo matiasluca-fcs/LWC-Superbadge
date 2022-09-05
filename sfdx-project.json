@@ -3,7 +3,8 @@
     {
       "path": "force-app",
       "default": true
-    }
+    },
+    { "path" : "LWCPackage"}
   ],
   "name": "LWC Specialist Superbadge Challenge",
   "namespace": "",

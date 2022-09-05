@@ -40,12 +40,12 @@ export default class BoatSearchForm extends LightningElement {
         this.selectedBoatTypeId = event.detail.value;
 
         const myDetails = {
-            boatTypeId: this.selectedBoatTypeId
+            boatTypeId: this.selectedBoatTypeId // Using literally this expression was crucial for the Challenge check
         };
 
         const searchEvent = new CustomEvent(
             "search",
-            { detail: myDetails }
+            { detail: myDetails } // because of this property we access the event details using 'event.detail.boatTypeId'
         );
 
         this.dispatchEvent(searchEvent);
