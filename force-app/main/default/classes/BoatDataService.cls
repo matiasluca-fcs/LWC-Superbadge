@@ -11,11 +11,12 @@ public with sharing class BoatDataService {
     }
 
     @AuraEnabled(cacheable = true)
-    public static List<Boat__c> getBoats(Id selectedBoatId) {
+    public static List<Boat__c> getBoats(String boatTypeId) {
         return [
-            SELECT Name
+            SELECT Name, Length__c, Price__c, Description__c
             FROM Boat__c
-            WHERE Id = :selectedBoatId
+            WHERE BoatType__c = :boatTypeId
+            ORDER BY Name
         ];
     }
     
@@ -42,9 +43,27 @@ public with sharing class BoatDataService {
     }
     
     @AuraEnabled(cacheable = true)
-    public static String getBoatsByLocation(
-        Double latitude, Double longitude, Id boatTypeId
-    ) {
-        return null;
+    public static String getBoatsByLocation(Decimal latitude, Decimal longitude, String boatTypeId) {
+        
+        String query = 'SELECT Name, Geolocation__Latitude__s, Geolocation__Longitude__s FROM Boat__c';
+        if (String.isNotBlank(boatTypeId)) {
+            query += 'WHERE BoatType__c = :boatTypeId';
+        }
+        query += ' WITH SECURITY_ENFORCED';
+        return JSON.serialize(Database.query(query));
+    }
+
+    @AuraEnabled
+    public static String updateBoatList(Object data){
+        List<Boat__c> boatsForUpdate = (List<Boat__c>) JSON.deserialize(
+            JSON.serialize(data),
+            List<Boat__c>.class
+        );
+        try {
+            update boatsForUpdate;
+            return 'Success: Boats Updated Successfully!';
+        } catch (Exception e) {
+            return 'The following exception has occurred: ' + e.getMessage();
+        }
     }
 }
