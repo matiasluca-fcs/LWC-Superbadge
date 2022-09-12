@@ -1,36 +1,35 @@
 import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
-export default class BoatSearch extends LightningElement {
+export default class BoatSearch extends NavigationMixin(LightningElement) {
     isLoading = false;
-    boatiddesdecombobox;
+
     
     // Handles loading event
-    handleLoading() { }
+    handleLoading() { 
+        this.isLoading = true;
+    }
     
     // Handles done loading event
-    handleDoneLoading() { }
+    handleDoneLoading() { 
+        this.isLoading = false;
+    }
     
     // Handles search boat event
     // This custom event comes from the form
     searchBoats(event) {
-
-        console.log('******* EVENT DETAILS THAT CAME TO boatSearch.searchBoats(event): ', event.detail.boatTypeId);
-
-        //this.boatiddesdecombobox = event.details.boatTypeId;
-
-         // Evento para enviar a Boat Search Results
-        // const myDetails = {
-        //     boatTypeId: event.detail.boatTypeId
-        // };
-
-        // const searchEvent = new CustomEvent(
-        //     "boatid",
-        //     {detail: myDetails}
-        // );
-
-        // this.dispatchEvent(searchEvent);
+        let boatTypeId = event.detail.boatTypeId;
+        this.template.querySelector('c-boat-search-results').searchBoats(boatTypeId);
+        this.handleDoneLoading();
     }
     
-    createNewBoat() { }
+    createNewBoat() { 
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'Boat__c',
+                actionName: 'new'
+            }
+        });
+    }
 }
